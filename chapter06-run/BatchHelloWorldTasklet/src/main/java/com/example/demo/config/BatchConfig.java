@@ -2,34 +2,34 @@ package com.example.demo.config;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersValidator;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.CompositeJobParametersValidator;
 import org.springframework.batch.core.job.DefaultJobParametersValidator;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
+
 import com.example.demo.validator.OptionalValidator;
 import com.example.demo.validator.RequiredValidator;
 
 @Configuration
-@EnableBatchProcessing
 public class BatchConfig {
 
-    /** JobBuilderのFactoryクラス */
     @Autowired
-    private JobBuilderFactory jobBuilderFactory;
+    private JobRepository jobRepository;
 
-    /** StepBuilderのFactoryクラス */
     @Autowired
-    private StepBuilderFactory stepBuilderFactory;
+    private PlatformTransactionManager transactionManager;
 
     /** HelloTasklet */
     @Autowired
@@ -77,23 +77,23 @@ public class BatchConfig {
     /** TaskletのStepを生成 */
     @Bean
     public Step taskletStep1() {
-        return stepBuilderFactory.get("HelloTaskletStep1") // Builderの取得
-            .tasklet(helloTasklet) // Taskletのセット
+        return new StepBuilder("HelloTaskletStep1", jobRepository) // Builderの取得
+            .tasklet(helloTasklet, transactionManager) // Taskletのセット
             .build(); // Stepの生成
     }
     
     /** TaskletのStepを生成 */
     @Bean
     public Step taskletStep2() {
-        return stepBuilderFactory.get("HelloTaskletStep2") // Builderの取得
-            .tasklet(helloTasklet2) // Taskletのセット
+        return new StepBuilder("HelloTaskletStep2", jobRepository) // Builderの取得
+            .tasklet(helloTasklet2, transactionManager) // Taskletのセット
             .build(); // Stepの生成
     }
 
     /** Jobを生成 */
     @Bean
     public Job taskletJob() throws Exception {
-        return jobBuilderFactory.get("HelloWorldTaskletJob") // Builderの取得
+        return new JobBuilder("HelloWorldTaskletJob", jobRepository) // Builderの取得
             .incrementer(new RunIdIncrementer()) // IDのインクリメント
             .start(taskletStep1()) // 最初のStep
             .next(taskletStep2()) // 次のStep

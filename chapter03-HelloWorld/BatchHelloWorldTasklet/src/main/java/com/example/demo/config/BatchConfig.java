@@ -3,25 +3,25 @@ package com.example.demo.config;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @EnableBatchProcessing
 public class BatchConfig {
 
-    /** JobBuilderのFactoryクラス */
     @Autowired
-    private JobBuilderFactory jobBuilderFactory;
+    private JobRepository jobRepository;
 
-    /** StepBuilderのFactoryクラス */
     @Autowired
-    private StepBuilderFactory stepBuilderFactory;
+    private PlatformTransactionManager transactionManager;
 
     /** HelloTasklet */
     @Autowired
@@ -30,15 +30,15 @@ public class BatchConfig {
     /** TaskletのStepを生成 */
     @Bean
     public Step taskletStep1() {
-        return stepBuilderFactory.get("HelloTaskletStep1") // Builderの取得
-            .tasklet(helloTasklet) // Taskletのセット
+        return new StepBuilder("HelloTaskletStep1", jobRepository) // Builderの取得
+            .tasklet(helloTasklet, transactionManager) // Taskletのセット
             .build(); // Stepの生成
     }
 
     /** Jobを生成 */
     @Bean
     public Job taskletJob() throws Exception {
-        return jobBuilderFactory.get("HelloWorldTaskletJob") // Builderの取得
+        return new JobBuilder("HelloWorldTaskletJob", jobRepository) // Builderの取得
             .incrementer(new RunIdIncrementer()) // IDのインクリメント
             .start(taskletStep1()) // 最初のStep
             .build(); // Jobの生成

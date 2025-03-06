@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>BatchRetryChunk</artifactId>
+	<artifactId>chap11-BatchRetryChunk</artifactId>
 	<version>1.0.0</version>
 	<name>BatchRetryChunk</name>
 	<description>Demo project for Spring Boot</description>

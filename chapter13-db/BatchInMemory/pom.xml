@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>BatchInMemory</artifactId>
+	<artifactId>chap13-BatchInMemory</artifactId>
 	<version>1.0.0</version>
 	<name>BatchInMemory</name>
 	<description>Demo project for Spring Boot</description>

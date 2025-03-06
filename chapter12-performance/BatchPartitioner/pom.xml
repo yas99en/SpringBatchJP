@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>BatchPartitioner</artifactId>
+	<artifactId>chap12-BatchPartitioner</artifactId>
 	<version>1.0.0</version>
 	<name>BatchPartitioner</name>
 	<description>Demo project for Spring Boot</description>

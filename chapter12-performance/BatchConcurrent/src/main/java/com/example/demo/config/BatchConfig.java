@@ -2,13 +2,13 @@ package com.example.demo.config;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.job.builder.FlowBuilder;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,18 +16,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@EnableBatchProcessing
 public class BatchConfig {
 
-    /** StepBuilderのFactoryクラス. */
     @Autowired
-    private StepBuilderFactory stepBuilderFactory;
+    private JobRepository jobRepository;
 
-    /** JobBuilderのFactoryクラス. */
     @Autowired
-    private JobBuilderFactory jobBuilderFactory;
+    private PlatformTransactionManager transactionManager;
 
     @Autowired
     @Qualifier("FirstTasklet")
@@ -44,24 +42,24 @@ public class BatchConfig {
     /** FirstStepを生成 */
     @Bean
     public Step firstStep() {
-        return stepBuilderFactory.get("FirstStep")
-            .tasklet(firstTasklet)
+        return new StepBuilder("FirstStep", jobRepository)
+            .tasklet(firstTasklet, transactionManager)
             .build();
     }
 
     /** SecondStepを生成 */
     @Bean
     public Step secondStep() {
-        return stepBuilderFactory.get("SecondStep")
-            .tasklet(secondTasklet)
+        return new StepBuilder("SecondStep", jobRepository)
+            .tasklet(secondTasklet, transactionManager)
             .build();
     }
 
     /** ThirdStepを生成 */
     @Bean
     public Step thirdStep() {
-        return stepBuilderFactory.get("ThirdStep")
-            .tasklet(thirdTasklet)
+        return new StepBuilder("ThirdStep", jobRepository)
+            .tasklet(thirdTasklet, transactionManager)
             .build();
     }
 
@@ -107,7 +105,7 @@ public class BatchConfig {
     /** Jobを生成 */
     @Bean
     public Job concurrentJob() throws Exception {
-        return jobBuilderFactory.get("ConcurrentJob")
+        return new JobBuilder("ConcurrentJob", jobRepository)
             .incrementer(new RunIdIncrementer())
                 .start(firstFlow()) // 最初のFlow
                 .next(splitFlow()) // Flowをセット

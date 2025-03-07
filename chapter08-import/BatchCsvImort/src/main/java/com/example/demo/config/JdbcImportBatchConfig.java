@@ -1,16 +1,20 @@
 package com.example.demo.config;
 
 import javax.sql.DataSource;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import com.example.demo.domain.model.Employee;
 
 @Configuration
@@ -44,8 +48,8 @@ public class JdbcImportBatchConfig extends BaseConfig {
     /** Stepの生成(JDBC) */
     @Bean
     public Step csvImportJdbcStep() {
-        return this.stepBuilderFactory.get("CsvImportJdbcStep")
-            .<Employee, Employee>chunk(10)
+        return new StepBuilder("CsvImportJdbcStep", jobRepository)
+            .<Employee, Employee>chunk(10, transactionManager)
             .reader(csvReader()).listener(this.readListener)
             .processor(compositeProcessor()).listener(this.processListener)
             .writer(jdbcWriter()).listener(this.writeListener)
@@ -55,7 +59,7 @@ public class JdbcImportBatchConfig extends BaseConfig {
     /** Jobの生成(JDBC) */
     @Bean("JdbcJob")
     public Job csvImportJdbcJob() {
-        return this.jobBuilderFactory.get("CsvImportJdbcJob")
+        return new JobBuilder("CsvImportJdbcJob", jobRepository)
             .incrementer(new RunIdIncrementer())
             .start(csvImportJdbcStep())
             .build();

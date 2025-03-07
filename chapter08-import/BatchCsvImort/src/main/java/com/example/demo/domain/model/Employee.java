@@ -1,10 +1,11 @@
 package com.example.demo.domain.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 import lombok.Data;
 
 @Data

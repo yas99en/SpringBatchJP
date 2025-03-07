@@ -3,30 +3,29 @@ package com.example.demo.config;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
+
 import com.example.demo.listener.TaskletStepListener;
 
 @Configuration
-@EnableBatchProcessing
 public class BatchConfig {
 
-    /** StepBuilderのFactoryクラス. */
     @Autowired
-    private StepBuilderFactory stepBuilderFactory;
+    private JobRepository jobRepository;
 
-    /** JobBuilderのFactoryクラス. */
     @Autowired
-    private JobBuilderFactory jobBuilderFactory;
+    private PlatformTransactionManager transactionManager;
 
     @Autowired
     @Qualifier("FirstTasklet")
@@ -54,8 +53,8 @@ public class BatchConfig {
     /** FirstStepを生成 */
     @Bean
     public Step firstStep() {
-        return stepBuilderFactory.get("FirstStep")
-            .tasklet(firstTasklet)
+        return new StepBuilder("FirstStep", jobRepository)
+            .tasklet(firstTasklet, transactionManager)
             .listener(taskletStepListener)
             .build();
     }
@@ -63,24 +62,24 @@ public class BatchConfig {
     /** SuccessStepを生成 */
     @Bean
     public Step suceessStep() {
-        return stepBuilderFactory.get("SuceessStep")
-            .tasklet(successTasklet)
+        return new StepBuilder("SuceessStep", jobRepository)
+            .tasklet(successTasklet, transactionManager)
             .build();
     }
 
     /** FailStepを生成 */
     @Bean
     public Step failStep() {
-        return stepBuilderFactory.get("FailStep")
-            .tasklet(failTasklet)
+        return new StepBuilder("FailStep", jobRepository)
+            .tasklet(failTasklet, transactionManager)
             .build();
     }
 
     /** RandomStepを生成 */
     @Bean
     public Step randomStep() {
-        return stepBuilderFactory.get("RandomStep")
-            .tasklet(randomTasklet)
+        return new StepBuilder("RandomStep", jobRepository)
+            .tasklet(randomTasklet, transactionManager)
             .listener(taskletStepListener)
             .build();
     }
@@ -88,7 +87,7 @@ public class BatchConfig {
     /** Taskletの分岐Jobを生成 */
     @Bean
     public Job taskletBranchJob() throws Exception {
-        return jobBuilderFactory.get("TaskletBranchJob")
+        return new JobBuilder("TaskletBranchJob", jobRepository)
             .incrementer(new RunIdIncrementer())
             .start(firstStep()) // 最初のStepをセット
                 .on(ExitStatus.COMPLETED.getExitCode()) // COMPLETEDの場合
@@ -103,7 +102,7 @@ public class BatchConfig {
     /** RandomTaskletの分岐Jobを生成 */
     @Bean
     public Job randomTaskletBranchJob() throws Exception {
-        return jobBuilderFactory.get("RandomTaskletBranchJob")
+        return new JobBuilder("RandomTaskletBranchJob", jobRepository)
             .incrementer(new RunIdIncrementer())
             .start(randomStep()) // 最初のStep
             .next(sampleDecider) // Deciderへ

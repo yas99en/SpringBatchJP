@@ -20,10 +20,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class BatchConfig {
 
     @Autowired
-    protected JobRepository jobRepository;
+    private JobRepository jobRepository;
 
     @Autowired
-    protected PlatformTransactionManager transactionManager;
+    private PlatformTransactionManager transactionManager;
 
     @Autowired
     private ItemReader<String> reader;

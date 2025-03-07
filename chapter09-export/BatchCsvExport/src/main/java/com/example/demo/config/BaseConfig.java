@@ -1,12 +1,11 @@
 package com.example.demo.config;
 
 import java.nio.charset.StandardCharsets;
+
 import org.springframework.batch.core.ItemReadListener;
 import org.springframework.batch.core.ItemWriteListener;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.FlatFileFooterCallback;
 import org.springframework.batch.item.file.FlatFileHeaderCallback;
@@ -18,17 +17,18 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.WritableResource;
+import org.springframework.transaction.PlatformTransactionManager;
+
 import com.example.demo.domain.model.Employee;
 
-@EnableBatchProcessing
 public abstract class BaseConfig {
 
     @Autowired
-    protected JobBuilderFactory jobBuilderFactory;
+    protected JobRepository jobRepository;
 
     @Autowired
-    protected StepBuilderFactory stepBuilderFactory;
+    protected PlatformTransactionManager transactionManager;
 
     /** 性別の数値を文字列に変換するProcessor */
     @Autowired
@@ -56,7 +56,7 @@ public abstract class BaseConfig {
 
         // ファイル出力先設定
         String filePath = property.outputPath();
-        Resource outputResource = new FileSystemResource(filePath);
+        WritableResource outputResource = new FileSystemResource(filePath);
         
         // 区切り文字設定
         DelimitedLineAggregator<Employee> aggregator = 

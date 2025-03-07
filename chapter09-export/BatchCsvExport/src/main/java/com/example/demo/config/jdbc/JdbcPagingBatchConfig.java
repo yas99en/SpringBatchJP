@@ -2,11 +2,15 @@ package com.example.demo.config.jdbc;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.sql.DataSource;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
@@ -15,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+
 import com.example.demo.config.BaseConfig;
 import com.example.demo.domain.model.Employee;
 
@@ -65,8 +70,8 @@ public class JdbcPagingBatchConfig extends BaseConfig {
     /** JdbcPagingItemReaderを使用するStepの生成 */
     @Bean
     public Step exportJdbcPagingStep() throws Exception {
-        return this.stepBuilderFactory.get("ExportJdbcPagingStep")
-            .<Employee, Employee>chunk(10)
+        return new StepBuilder("ExportJdbcPagingStep", jobRepository)
+            .<Employee, Employee>chunk(10, transactionManager)
             .reader(jdbcPagingReader()).listener(readListener)
             .processor(this.genderConvertProcessor)
             .writer(csvWriter()).listener(writeListener)
@@ -76,7 +81,7 @@ public class JdbcPagingBatchConfig extends BaseConfig {
     /** JdbcPagingItemReaderを使用するJobの生成 */
     @Bean("JdbcPagingJob")
     public Job exportJdbcPagingJob() throws Exception {
-        return this.jobBuilderFactory.get("ExportJdbcPagingJob")
+        return new JobBuilder("ExportJdbcPagingJob", jobRepository)
             .incrementer(new RunIdIncrementer())
             .start(exportJdbcPagingStep())
             .build();

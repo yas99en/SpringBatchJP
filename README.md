@@ -7,6 +7,8 @@
 ## 変更点
 
 - Eclipseで一括インポートできるように各pom.xmlのartifactIdに「chapXX-」のようなプレフィックスを付与
+- SpringBootのバージョンを3.4.3に変更
+- java.versionを21に変更
 - @Configurationクラスの@EnableBatchProcessingを削除
 - @ConfigurationクラスからJobBuilderFactoryとJobBuilderFactoryを削除
 - @ConfigurationクラスでJobRepositoryとPlatformTransactionManagerを@Autowired

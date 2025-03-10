@@ -2,28 +2,26 @@ package com.example.demo.config;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.partition.support.Partitioner;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@EnableBatchProcessing
 public class BatchConfig {
 
-    /** JobBuilderのFactoryクラス */
     @Autowired
-    private JobBuilderFactory jobBuilderFactory;
+    private JobRepository jobRepository;
 
-    /** StepBuilderのFactoryクラス */
     @Autowired
-    private StepBuilderFactory stepBuilderFactory;
+    private PlatformTransactionManager transactionManager;
 
     @Autowired
     private Partitioner samplePartitioner;
@@ -39,14 +37,14 @@ public class BatchConfig {
 
     @Bean
     public Step workerStep() {
-        return stepBuilderFactory.get("WorkerStep")
-            .tasklet(workerTasklet)
+        return new StepBuilder("WorkerStep", jobRepository)
+            .tasklet(workerTasklet, transactionManager)
             .build();
     }
 
     @Bean
     public Step partitionStep() {
-        return stepBuilderFactory.get("PartitionStep")
+        return new StepBuilder("PartitionStep", jobRepository)
             .partitioner("WorkerStep", samplePartitioner) // Partitioner
             .step(workerStep()) // step
             .gridSize(3) // 同時実行数
@@ -56,7 +54,7 @@ public class BatchConfig {
 
     @Bean
     public Job partitionJob() {
-        return jobBuilderFactory.get("PartitionJob")
+        return new JobBuilder("PartitionJob", jobRepository)
             .start(partitionStep())
             .build();
     }

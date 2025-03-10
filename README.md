@@ -18,6 +18,8 @@
 - ItemWriterの引数の型をListからChunkへ変更
 - javaxをjakartaに変更(BeanValidationとJPA)
 - mybatis-spring-boot-starterのバージョンを3.0.4に変更
+- chap12-BatchCsvExportのParallelBatchConfigはthrottleLimitが非推奨のまま
+- chap13-BatchInMemoryはSpringBatch5に対応できない
 
 ## JobReposity
 

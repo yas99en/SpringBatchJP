@@ -20,6 +20,13 @@
 - mybatis-spring-boot-starterのバージョンを3.0.4に変更
 - chap12-BatchCsvExportのParallelBatchConfigはthrottleLimitが非推奨のまま
 - chap13-BatchInMemoryはSpringBatch5に対応できない
+- chap14-BatchTestTasklet
+Eclipseからのテスト実行時の警告を消すにはVM引数に以下を追加する
+```
+-Xshare:off
+-javaagent:${env_var:userprofile}\.m2\repository\org\mockito\mockito-core\5.14.2\mockito-core-5.14.2.jar
+```
+
 
 ## JobReposity
 

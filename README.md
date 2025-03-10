@@ -20,13 +20,29 @@
 - mybatis-spring-boot-starterのバージョンを3.0.4に変更
 - chap12-BatchCsvExportのParallelBatchConfigはthrottleLimitが非推奨のまま
 - chap13-BatchInMemoryはSpringBatch5に対応できない
-- chap14-BatchTestTasklet
+- chap14全般  
+テストを実行すると警告が出るのでpom.xmlに以下を追加
+```:xml
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-surefire-plugin</artifactId>
+	<configuration>
+		<argLine>
+			-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+			-Xshare:off
+		</argLine>
+	</configuration>
+</plugin>
+```
 Eclipseからのテスト実行時の警告を消すにはVM引数に以下を追加する
 ```
 -Xshare:off
 -javaagent:${env_var:userprofile}\.m2\repository\org\mockito\mockito-core\5.14.2\mockito-core-5.14.2.jar
 ```
-
+- chap14-BatchCsvImortとchap14-BatchCsvExport  
+ジョブが複数定義されているとIntegrationTestでエラーになるので、使用するジョブ以外はコメントアウト
+- chap14-BatchCsvExport  
+org.springframework.batch.test.AssertFileが存在しないので、AssertJのhasSameTextualContentAsで代用
 
 ## JobReposity
 
@@ -34,12 +50,16 @@ SpringBatch5のJobRepositoryのテーブル群は、SpringBatch4と互換性が�
 必要に応じてテーブルを削除してください。
 
 ``` :sql
-drop table if exists batch_job_execution cascade;
-drop table if exists batch_job_execution_context;
-drop table if exists batch_job_execution_params;
-drop table if exists batch_job_instance;
-drop table if exists batch_step_execution cascade;
-drop table if exists batch_step_execution_context;
+DROP TABLE  IF EXISTS BATCH_STEP_EXECUTION_CONTEXT;
+DROP TABLE  IF EXISTS BATCH_JOB_EXECUTION_CONTEXT;
+DROP TABLE  IF EXISTS BATCH_STEP_EXECUTION;
+DROP TABLE  IF EXISTS BATCH_JOB_EXECUTION_PARAMS;
+DROP TABLE  IF EXISTS BATCH_JOB_EXECUTION;
+DROP TABLE  IF EXISTS BATCH_JOB_INSTANCE;
+
+DROP SEQUENCE  IF EXISTS BATCH_STEP_EXECUTION_SEQ;
+DROP SEQUENCE  IF EXISTS BATCH_JOB_EXECUTION_SEQ;
+DROP SEQUENCE  IF EXISTS BATCH_JOB_SEQ;
 ```
 
 

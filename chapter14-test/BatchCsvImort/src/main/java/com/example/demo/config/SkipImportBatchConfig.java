@@ -4,10 +4,13 @@ import org.mybatis.spring.batch.MyBatisBatchItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import com.example.demo.domain.model.Employee;
 
 @Configuration
@@ -23,8 +26,8 @@ public class SkipImportBatchConfig extends BaseConfig {
     /** Stepの生成(Skip) */
     @Bean
     public Step csvImportSkipStep() {
-        return this.stepBuilderFactory.get("CsvImportSkipStep")
-            .<Employee, Employee>chunk(10)
+        return new StepBuilder("CsvImportSkipStep", jobRepository)
+            .<Employee, Employee>chunk(10, transactionManager)
             .reader(csvReader()).listener(this.readListener)
             .processor(genderConvertProcessor).listener(this.processListener)
             .writer(mybatisWriter)
@@ -36,9 +39,9 @@ public class SkipImportBatchConfig extends BaseConfig {
     }
 
     /** Jobの生成(Skip) */
-    @Bean("SkipJob")
+//    @Bean("SkipJob")
     public Job csvImportSkipJob() {
-        return this.jobBuilderFactory.get("CsvImportSkipJob")
+        return new JobBuilder("CsvImportSkipJob", jobRepository)
             .incrementer(new RunIdIncrementer())
             .start(csvImportSkipStep())
             .build();

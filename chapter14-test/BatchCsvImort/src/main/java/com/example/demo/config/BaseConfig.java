@@ -2,13 +2,12 @@ package com.example.demo.config;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
 import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.ItemReadListener;
 import org.springframework.batch.core.ItemWriteListener;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
@@ -19,16 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.transaction.PlatformTransactionManager;
+
 import com.example.demo.domain.model.Employee;
 
-@EnableBatchProcessing
+
 public abstract class BaseConfig {
 
     @Autowired
-    protected JobBuilderFactory jobBuilderFactory;
+    protected JobRepository jobRepository;
 
     @Autowired
-    protected StepBuilderFactory stepBuilderFactory;
+    protected PlatformTransactionManager transactionManager;
 
     /** 性別の文字列を数値に変換をするProcessor */
     @Autowired

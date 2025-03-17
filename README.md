@@ -16,6 +16,7 @@
 - JobBuilderFactory.get()をnew JobBuilder()に置き換え
 - chunk()やtasklet()にtransactionManagerを渡すように書き換え
 - ItemWriterの引数の型をListからChunkへ変更
+- StringUtilsをio.micrometer.common.util.StringUtilsに変更
 - javaxをjakartaに変更(BeanValidationとJPA)
 - mybatis-spring-boot-starterのバージョンを3.0.4に変更
 - chap12-BatchCsvExportのParallelBatchConfigはthrottleLimitが非推奨のまま

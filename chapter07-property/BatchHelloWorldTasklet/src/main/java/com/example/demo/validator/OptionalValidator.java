@@ -3,7 +3,10 @@ package com.example.demo.validator;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.JobParametersValidator;
-import io.micrometer.core.instrument.util.StringUtils;
+
+import io.micrometer.common.util.StringUtils;
+
+
 
 public class OptionalValidator implements JobParametersValidator {
 

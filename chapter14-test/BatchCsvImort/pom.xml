@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>chap14-BatchCsvImort</artifactId>
+	<artifactId>c14-test-BtCsvImort</artifactId>
 	<version>1.0.0</version>
 	<name>BatchCsvImort</name>
 	<description>Demo project for Spring Boot</description>

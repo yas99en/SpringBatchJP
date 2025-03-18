@@ -6,7 +6,7 @@
 
 ## 変更点
 
-- Eclipseで一括インポートできるように各pom.xmlのartifactIdに「chapXX-」のようなプレフィックスを付与
+- Eclipseで一括インポートできるように各pom.xmlのartifactIdを「cXX-TTT-Bt〇〇〇」のように変更
 - SpringBootのバージョンを3.4.3に変更
 - java.versionを21に変更
 - @Configurationクラスの@EnableBatchProcessingを削除

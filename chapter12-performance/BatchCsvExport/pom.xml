@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>chap12-BatchCsvExport</artifactId>
+	<artifactId>c12-perf-BtCsvExport</artifactId>
 	<version>1.0.0</version>
 	<name>BatchCsvExport</name>
 	<description>Demo project for Spring Boot</description>

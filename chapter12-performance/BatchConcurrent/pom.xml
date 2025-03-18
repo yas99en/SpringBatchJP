@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>chap12-BatchConcurrent</artifactId>
+	<artifactId>c12-perf-BtConcurrent</artifactId>
 	<version>1.0.0</version>
 	<name>BatchConcurrent</name>
 	<description>Demo project for Spring Boot</description>

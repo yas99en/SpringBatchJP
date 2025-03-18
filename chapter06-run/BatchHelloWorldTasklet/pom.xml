@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>chap06-BatchHelloWorldTasklet</artifactId>
+	<artifactId>c06-run-BtHelloWorldTasklet</artifactId>
 	<version>1.0.0</version>
 	<name>BatchHelloWorldTasklet</name>
 	<description>Demo project for Spring Boot</description>

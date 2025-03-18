@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>chap11-BatchRetryTasklet</artifactId>
+	<artifactId>c11-cont-BtRetryTasklet</artifactId>
 	<version>1.0.0</version>
 	<name>BatchRetryTasklet</name>
 	<description>Demo project for Spring Boot</description>
